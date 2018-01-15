@@ -1,0 +1,21 @@
+{
+  "name": "xinlinghuayuan",
+  "description": "",
+  "main": "index.js",
+  "authors": [
+    "wsq"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "js-md5": "^2.10.0",
+    "bootstrapvalidator": "^0.5.3"
+  }
+}

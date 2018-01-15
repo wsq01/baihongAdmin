@@ -1,0 +1,122 @@
+angular.module('app').controller('gartensCtrl', ['$http', '$scope', 'locals', 'NgTableParams', function ($http, $scope, locals, NgTableParams) {
+    var userInfo = locals.getObject('userInfo'),
+        sid = userInfo.sid,
+        uid = window.localStorage.getItem('uid');
+    // 获取
+    $scope.getData = function () {
+        $http({
+            method: "post",
+            url: "../db/gartens.php",
+            data: {
+                sid: sid,
+                cmd: 'get'
+            },
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded'
+            },
+            transformRequest: function (data) {
+                return $.param(data);
+            }
+        }).success(function (data) {
+            console.log(data);
+            $scope.district = data.kidergartens;
+            $scope.isShowFilter = false;
+            $scope.dataTable = new NgTableParams({
+                page: 1,
+                count: 15
+            }, {
+                counts: [15, 20, 30],
+                dataset: $scope.district
+            });
+        });
+    };
+    $scope.getData();
+    $scope.showFilters = function () {
+        if ($scope.isShowFilter == false) {
+            $scope.isShowFilter = true;
+        } else {
+            $scope.isShowFilter = false;
+        }
+    };
+    // 添加****
+    $scope.add = function () {
+        $scope.add_sure = function () {
+            $http({
+                method: "post",
+                url: "../db/gartens.php",
+                data: {
+                    sid: sid,
+                    cmd: "add",
+                    name: $scope.addItem.name,
+                    city:$scope.addItem.city
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                transformRequest: function (data) {
+                    return $.param(data);
+                }
+            }).success(function (data) {
+                console.log(data);
+                $scope.getData();
+                $('#add').modal('hide');
+            });
+        };
+    };
+    // 修改****
+    $scope.change = function (item) {
+        $scope.districtItem = item;
+        var s_name = $scope.districtItem.name;
+        $scope.change_sure = function () {
+            $http({
+                method: "post",
+                url: "../db/gartens.php",
+                data: {
+                    sid: sid,
+                    cmd: "edit",
+                    id: $scope.districtItem.id,
+                    name: $scope.districtItem.name,
+                    city:$scope.districtItem.city
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                transformRequest: function (data) {
+                    return $.param(data);
+                }
+            }).success(function (data) {
+                console.log(data);
+            });
+            $('#changeModal').modal('hide');
+        };
+        $scope.check_cancel = function () {
+            $scope.districtItem.name = s_name;
+            $('#changeModal').modal('hide');
+        };
+    };
+    //删除
+    $scope.delete = function (item) {
+        $scope.districtItem = item;
+        $scope.delete_sure = function () {
+            $http({
+                method: "post",
+                url: "../db/gartens.php",
+                data: {
+                    sid: sid,
+                    cmd: "del",
+                    id: $scope.districtItem.id
+                },
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                transformRequest: function (data) {
+                    return $.param(data);
+                }
+            }).success(function (data) {
+                console.log(data);
+                $scope.getData();
+                $('#deleteModal').modal('hide');
+            });
+        };
+    };
+}]);
